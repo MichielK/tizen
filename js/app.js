@@ -44,6 +44,7 @@
 	toggleFunction = function(event){
 		var target = event.target;
 		console.log(target.id);
+		console.log('ipadres = ' + ipadres);
 	};
 	
 	var page = document.getElementById("main"), 
