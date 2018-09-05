@@ -20,23 +20,55 @@
 }());
 
 (function(tau) {
-    var page,
-        list,
-        listHelper;
+	var page, list, listHelper;
 
-    /* Check for a circular device */
-    if (tau.support.shape.circle) {
-        document.addEventListener('pagebeforeshow', function(e) {
-            page = e.target;
-            list = page.querySelector('.ui-listview');
-            if (list) {
-                /* Create SnapListView and binding rotary event using tau.helper */
-                listHelper = tau.helper.SnapListStyle.create(list);
-            }
-         });
+	/* Check for a circular device */
+	if (tau.support.shape.circle) {
+		document.addEventListener('pagebeforeshow', function(e) {
+			page = e.target;
+			list = page.querySelector('.ui-listview');
+			if (list) {
+				/* Create SnapListView and binding rotary event using tau.helper */
+				listHelper = tau.helper.SnapListStyle.create(list);
+			}
+		});
 
-        document.addEventListener('pagebeforehide', function(e) {
-            listHelper.destroy();
-        });
-    }
+		document.addEventListener('pagebeforehide', function(e) {
+			listHelper.destroy();
+		});
+	}
 }(tau));
+
+(function() {
+	var page = document.getElementById("main"), 
+		elList = document.getElementById("vlist1"), vlist;
+	
+	var listData = JSON_DATA.response.switches;
+
+	page.addEventListener("pagebeforeshow", function() {
+		vlist = tau.widget.VirtualListview(elList, {
+			dataLength : listData.length,
+			bufferSize : 40,
+			scrollElement : "ui-scroller"
+		});
+
+		// Update listitem
+		vlist.setListItemUpdater(function(elListItem, newIndex) {
+			var data = listData[newIndex];
+			
+			var html = '<span class="ui-li-text-main">'+ data.id + " - " + data.type + '</span>';
+			elListItem.innerHTML = html;
+			
+			if(data.status === 'on')
+				elListItem.classList.add("yellow");
+		});
+		// Draw child elements
+		vlist.draw();
+	});
+	page.addEventListener("pagehide", function() {
+		// Remove all children in the vlist
+		vlist.destroy();
+
+	});
+
+}());

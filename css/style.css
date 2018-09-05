@@ -1,6 +1,14 @@
 /* this file is left blank on purpose, if developer can't find classes he needs in framework, he can customize his
 app adding his own styles here
  */
-.yellow {
-	color: yellow;
+li.yellow.ui-snap-listview-item {
+	color: yellow ;
+}
+
+li.yellow.ui-snap-listview-item.ui-snap-listview-selected {
+	font-weight: bold;
+}
+
+.ui-listview li>* {
+	color: inherit !important;
 }
