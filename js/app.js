@@ -40,6 +40,12 @@
 }(tau));
 
 (function() {
+	
+	toggleFunction = function(event){
+		var target = event.target;
+		console.log(target.id);
+	};
+	
 	var page = document.getElementById("main"), 
 		elList = document.getElementById("vlist1"), vlist;
 	
@@ -56,11 +62,14 @@
 		vlist.setListItemUpdater(function(elListItem, newIndex) {
 			var data = listData[newIndex];
 			
-			var html = '<span class="ui-li-text-main">'+ data.id + " - " + data.type + '</span>';
+			var html = '<span class="ui-li-text-main" id="'+ data.id + '">'+ data.id + ' - ' + data.type + '</span>';
 			elListItem.innerHTML = html;
 			
 			if(data.status === 'on')
 				elListItem.classList.add("yellow");
+			
+			elListItem.addEventListener("click", toggleFunction, false);
+			
 		});
 		// Draw child elements
 		vlist.draw();
