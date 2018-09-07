@@ -1,30 +1,42 @@
-/* this file is left blank on purpose, if developer can't find classes he needs in framework, he can customize his
-app adding his own styles here
- */
-li.yellow {
-	color: yellow !important;
+#moreoptionsDrawer {
+	display: none;
 }
 
-li.ui-arc-listview-selected {
-	font-weight: bold !important;
+@media all and (-tizen-geometric-shape: circle) {
+	#moreoptionsDrawer {
+		display: block;
+		background-color: rgba(255, 255, 255, 0.1);
+		border-radius: 100%;
+	}
+	#moreoptionsPopup {
+		display: none;
+	}
 }
 
-/*div#main.ui-page.ui-page-active{
-	background: url("../images/Logo_Homewizard.png") no-repeat center center fixed;
-	background-size: cover;
-}*/
-
-.ui-listview li>* {
-	color: inherit !important;
+.lamp-aan-icon {
+	-webkit-mask-image: url("../images/lamp-aan.png");
 }
 
-li.ui-snap-listview-item {
-	min-height: 47px !important;
+.lamp-uit-icon {
+	-webkit-mask-image: url("../images/lamp-uit.png");
 }
 
-.ui-listview li.li-has-3line 
-{
-   padding-top: 0;
-   padding-bottom: 0;
-   height: 47px;
+.switch-aan-icon {
+	-webkit-mask-image: url("../images/switch-aan.png");
+}
+
+.switch-uit-icon {
+	-webkit-mask-image: url("../images/switch-uit.png");
+}
+
+.socket-aan-icon {
+	-webkit-mask-image: url("../images/socket-aan.png");
+}
+
+.socket-uit-icon {
+	-webkit-mask-image: url("../images/socket-uit.png");
+}
+
+.yellow {
+	background-color: yellow !important;
 }

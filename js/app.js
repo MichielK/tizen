@@ -19,66 +19,78 @@
 	});
 }());
 
-//(function(tau) {
-//	var page, list, listHelper;
-//
-//	/* Check for a circular device */
-//	if (tau.support.shape.circle) {
-//		document.addEventListener('pagebeforeshow', function(e) {
-//			page = e.target;
-//			list = page.querySelector('.ui-listview');
-//			if (list) {
-//				/* Create SnapListView and binding rotary event using tau.helper */
-//				listHelper = tau.helper.SnapListStyle.create(list);
-//			}
-//		});
-//
-//		document.addEventListener('pagebeforehide', function(e) {
-//			listHelper.destroy();
-//		});
-//	}
-//}(tau));
+(function(tau) {
+	var page = document.getElementById("selectorPage");
+	var selector = document.getElementById("selector");
+	var selectorComponent, clickBound;
 
-(function() {
-
-	toggleFunction = function(event) {
+	function onClick(event) {
 		var target = event.target;
-		console.log(target.id);
-		console.log('ipadres = ' + ipadres);
-	};
+		
+		if (!target.classList.contains("ui-selector-indicator")) {
+			return;
+		}
 
-	var page = document.getElementById("main"), elList = document
-			.getElementById("vlist1"), vlist;
-
-	var listData = JSON_DATA.response.switches;
-
+		target = document.getElementsByClassName("ui-item-active")[0];
+		console.log(target);
+		
+		console.log('Clicked title: ' + target.getAttribute("data-title"));
+		console.log('Clicked id: ' + target.getAttribute("data-id"));
+		return;
+	}
 	page.addEventListener("pagebeforeshow", function() {
-		vlist = tau.widget.VirtualListview(elList, {
-			dataLength : (listData.length),
-			bufferSize : 40,
-			scrollElement : "ui-scroller"
-		});
-
-		// Update listitem
-		vlist.setListItemUpdater(function(elListItem, newIndex) {
-				var data = listData[newIndex];
-
-				var html = '<span class="ui-li-text-main" id="' + data.id
-						+ '">' + data.id + ' - ' + data.type + '</span>';
-				elListItem.innerHTML = html;
-
-				if (data.status === 'on')
-					elListItem.classList.add("yellow");
-
-				elListItem.addEventListener("click", toggleFunction, false);
-		});
-		// Draw child elements
-		vlist.draw();
+		clickBound = onClick.bind(null);
+		selectorComponent = tau.widget.Selector(selector);
+		selector.addEventListener("click", clickBound, false);
 	});
-	page.addEventListener("pagehide", function() {
-		// Remove all children in the vlist
-		vlist.destroy();
-
+	page.addEventListener("pagebeforehide", function() {
+		selector.removeEventListener("click", clickBound, false);
+		selectorComponent.destroy();
 	});
+}(window.tau));
 
-}());
+(function(tau) {
+	var anker = document.getElementById("selector");
+	var result = '';
+
+	var listData = JSON_DATA_STATUS.response.switches;
+	for (var i = 0; i < listData.length; i++) {
+		var dataElement = listData[i];
+		if(dataElement.type === 'somfy')
+		{
+			continue;
+		}
+
+		var naam = dataElement.name;
+		var lowercaseNaam = naam.toLowerCase();
+		
+		var id = dataElement.id; // TODO
+		var status = dataElement.status;
+
+		var html = '<div class="ui-item ';
+		if (lowercaseNaam.search('lamp') > -1) {
+			html = html + 'lamp';
+		} else if (lowercaseNaam.search('spotjes') > -1) {
+			html = html + 'lamp';
+		} else if (lowercaseNaam.search('switch') > -1) {
+			html = html + 'switch';
+		} else if (lowercaseNaam.search('stekkerdoos') > -1) {
+			html = html + 'socket';
+		}
+		else {
+			console.log("Kon geen icoontje bepalen: " + naam);
+		}
+
+		if (status === 'on') {
+			html = html + '-aan-icon yellow" data-title="';
+		} else {
+			html = html + '-uit-icon" data-title="';
+		}
+
+		html = html + naam + '" data-id="' + id + '"></div>';
+
+		result = result + html;
+	}
+	anker.innerHTML = result;
+
+}(window.tau));
