@@ -1,4 +1,4 @@
-var JSON_DATA_STATUS = {  
+var JSON_DUMMY_DATA = {  
 		   "status":"ok",
 		   "version":"3.403",
 		   "request":{  
@@ -33,7 +33,7 @@ var JSON_DATA_STATUS = {
 		            "id":3,
 		            "name":"Lamp gang",
 		            "type":"switch",
-		            "status":"on",
+		            "status":"off",
 		            "favorite":"no"
 		         },
 		         {  
@@ -68,7 +68,7 @@ var JSON_DATA_STATUS = {
 		            "id":8,
 		            "name":"Fontijn switch",
 		            "type":"switch",
-		            "status":"on",
+		            "status":"off",
 		            "favorite":"no"
 		         },
 		         {  

@@ -1,84 +1,50 @@
 (function() {
 	window.addEventListener("tizenhwkey", function(ev) {
-		var activePopup = null, page = null, pageid = "";
-
-		if (ev.keyName === "back") {
-			activePopup = document.querySelector(".ui-popup-active");
-			page = document.getElementsByClassName("ui-page-active")[0];
-			pageid = page ? page.id : "";
-
-			if (pageid === "main" && !activePopup) {
-				try {
-					tizen.application.getCurrentApplication().exit();
-				} catch (ignore) {
-				}
-			} else {
-				window.history.back();
+		var page = document.getElementById("main");
+		if (page !== null) {
+			try {
+				tizen.application.getCurrentApplication().exit();
+			} catch (ignore) {
 			}
+		} else {
+			window.history.back();
 		}
 	});
 }());
 
 (function(tau) {
-	var page = document.getElementById("selectorPage");
+	var page = document.getElementById("main");
 	var selector = document.getElementById("selector");
 	var selectorComponent, clickBound;
 
-	function onClick(event) {
-		var target = event.target;
-
-		// controle of juiste element "aangeraakt" is
-		if (!target.classList.contains("ui-selector-indicator")) {
-			return;
-		}
-
-		target = document.getElementsByClassName("ui-item-active")[0];
-
-		var url = 'http://' + ipadres + '/' + wachtwoord + '/sw/' + target.getAttribute("data-id") + '/';
-		
-		if (target.classList.contains('yellow')) {
-			url = url + 'off';
-			target.classList.remove('yellow');
-			console.log(target.getAttribute("data-title") + ' uitgezet');
-		} else {
-			url = url + 'on';
-			target.classList.add('yellow');
-			console.log(target.getAttribute("data-title") + ' aangezet');
-		}
-
-		var xmlhttp = new XMLHttpRequest();
-
-		// xmlhttp.onreadystatechange = function() {
-		// if (xmlhttp.readyState == xmlhttp.DONE) {
-		// console.log(xmlhttp.responseText);
-		// } else {
-		// console.log(xmlhttp.statusText);
-		// }
-		// };
-		// xmlhttp.onerror = function(e) {
-		// console.log("onerror: " + xmlhttp.statusText);
-		// };
-
-		xmlhttp.open("GET", url);
-		xmlhttp.send();
-		return;
-	}
-	page.addEventListener("pagebeforeshow", function() {
-		clickBound = onClick.bind(null);
-		selectorComponent = tau.widget.Selector(selector);
-		selector.addEventListener("click", clickBound, false);
-	});
 	page.addEventListener("pagebeforehide", function() {
 		selector.removeEventListener("click", clickBound, false);
 		selectorComponent.destroy();
 	});
+	
+	var xmlhttp = new XMLHttpRequest();
+	
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == xmlhttp.DONE) {
+			refreshData(JSON.parse(this.responseText));
+
+			// maak cirkel-selector
+			clickBound = onClick.bind(null);
+			selectorComponent = tau.widget.Selector(selector);
+			selector.addEventListener("click", clickBound, false);
+		}
+	};
+
+	var url = baseUrl + '/get-sensors';
+	xmlhttp.open("GET", url);
+	xmlhttp.send();
+
 }(window.tau));
 
-(function(tau) {
+function refreshData(json) {
+	var listData = json.response.switches;
 	var anker = document.getElementById("selector");
 	var result = '';
-
-	var listData = JSON_DATA_STATUS.response.switches;
 	for (var i = 0; i < listData.length; i++) {
 		var dataElement = listData[i];
 		if (dataElement.type === 'somfy') {
@@ -87,7 +53,6 @@
 
 		var naam = dataElement.name;
 		var lowercaseNaam = naam.toLowerCase();
-
 		var id = dataElement.id;
 		var status = dataElement.status;
 
@@ -115,5 +80,31 @@
 		result = result + html;
 	}
 	anker.innerHTML = result;
+}
 
-}(window.tau));
+function onClick(event) {
+	var target = event.target;
+
+	// controle of juiste element "aangeraakt" is
+	if (!target.classList.contains("ui-selector-indicator")) {
+		return;
+	}
+
+	target = document.getElementsByClassName("ui-item-active")[0];
+
+	var url = baseUrl + '/sw/' + target.getAttribute("data-id") + '/';
+
+	if (target.classList.contains('yellow')) {
+		url = url + 'off';
+		target.classList.remove('yellow');
+		console.log(target.getAttribute("data-title") + ' uitgezet');
+	} else {
+		url = url + 'on';
+		target.classList.add('yellow');
+		console.log(target.getAttribute("data-title") + ' aangezet');
+	}
+
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.open("GET", url);
+	xmlhttp.send();
+}
