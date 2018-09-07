@@ -1,14 +1,30 @@
 /* this file is left blank on purpose, if developer can't find classes he needs in framework, he can customize his
 app adding his own styles here
  */
-li.yellow.ui-snap-listview-item {
-	color: yellow ;
+li.yellow {
+	color: yellow !important;
 }
 
-li.yellow.ui-snap-listview-item.ui-snap-listview-selected {
-	font-weight: bold;
+li.ui-arc-listview-selected {
+	font-weight: bold !important;
 }
+
+/*div#main.ui-page.ui-page-active{
+	background: url("../images/Logo_Homewizard.png") no-repeat center center fixed;
+	background-size: cover;
+}*/
 
 .ui-listview li>* {
 	color: inherit !important;
+}
+
+li.ui-snap-listview-item {
+	min-height: 47px !important;
+}
+
+.ui-listview li.li-has-3line 
+{
+   padding-top: 0;
+   padding-bottom: 0;
+   height: 47px;
 }
