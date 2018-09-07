@@ -13,27 +13,27 @@
 	}
 }
 
-.lamp-aan-icon {
+.lamp-icon.yellow {
 	-webkit-mask-image: url("../images/lamp-aan.png");
 }
 
-.lamp-uit-icon {
+.lamp-icon {
 	-webkit-mask-image: url("../images/lamp-uit.png");
 }
 
-.switch-aan-icon {
+.switch-icon.yellow {
 	-webkit-mask-image: url("../images/switch-aan.png");
 }
 
-.switch-uit-icon {
+.switch-icon {
 	-webkit-mask-image: url("../images/switch-uit.png");
 }
 
-.socket-aan-icon {
+.socket-icon.yellow {
 	-webkit-mask-image: url("../images/socket-aan.png");
 }
 
-.socket-uit-icon {
+.socket-icon {
 	-webkit-mask-image: url("../images/socket-uit.png");
 }
 

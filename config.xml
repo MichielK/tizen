@@ -5,6 +5,7 @@
     <feature name="http://tizen.org/feature/screen.size.normal"/>
     <icon src="Logo_Homewizard.jpg"/>
     <name>HomewizardTau</name>
+    <tizen:privilege name="http://tizen.org/privilege/internet"/>
     <tizen:profile name="wearable"/>
     <tizen:setting hwkey-event="enable"/>
 </widget>
