@@ -1,47 +1,55 @@
-(function() {
-	window.addEventListener("tizenhwkey", function(ev) {
-		var page = document.getElementById("main");
-		if (page !== null) {
-			try {
-				tizen.application.getCurrentApplication().exit();
-			} catch (ignore) {
+(function () {
+	window.addEventListener("tizenhwkey", function (ev) {
+		var activePopup = null,
+			page = null,
+			pageId = "";
+
+		if (ev.keyName === "back") {
+			activePopup = document.querySelector(".ui-popup-active");
+			page = document.getElementsByClassName("ui-page-active")[0];
+			pageId = page ? page.id : "";
+
+			if (pageId === "main" && !activePopup) {
+				try {
+					tizen.application.getCurrentApplication().exit();
+				} catch (ignore) {
+				}
+			} else {
+				window.history.back();
 			}
-		} else {
-			window.history.back();
 		}
 	});
 }());
 
-(function(tau) {
-	var page = document.getElementById("main");
-	var selector = document.getElementById("selector");
-	var selectorComponent, clickBound;
 
-	page.addEventListener("pagebeforehide", function() {
-		selector.removeEventListener("click", clickBound, false);
-		selectorComponent.destroy();
-	});
-	
+(function(tau) {
+	refreshData();
+}(window.tau));
+
+var selectorWidget;
+function refreshData(){	
 	var xmlhttp = new XMLHttpRequest();
 	
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == xmlhttp.DONE) {
-			refreshData(JSON.parse(this.responseText));
+			updateGui(JSON.parse(this.responseText));
 
-			// maak cirkel-selector
-			clickBound = onClick.bind(null);
-			selectorComponent = tau.widget.Selector(selector);
-			selector.addEventListener("click", clickBound, false);
+			if(selectorWidget !== undefined)
+				selectorWidget.destroy();
+			
+			var selector = document.getElementById("selector");
+			selectorWidget = tau.widget.Selector(selector);
+			selector.addEventListener("click", onClick, false);
 		}
 	};
 
 	var url = baseUrl + '/get-sensors';
 	xmlhttp.open("GET", url);
-	xmlhttp.send();
+	xmlhttp.timeout = 3000;
+	xmlhttp.send();	
+}
 
-}(window.tau));
-
-function refreshData(json) {
+function updateGui(json) {
 	var listData = json.response.switches;
 	var anker = document.getElementById("selector");
 	var result = '';
@@ -79,6 +87,22 @@ function refreshData(json) {
 
 		result = result + html;
 	}
+	
+	listData = json.response.thermometers;
+	for (var i = 0; i < listData.length; i++) {
+		var dataElement = listData[i];
+
+		var naam = dataElement.name;
+		var temp = dataElement.te;
+		if (temp === undefined)
+			temp = '-';
+
+		var html = '<div class="ui-item text" data-title="';
+		html = html + naam + '">'+temp+'&deg;</div>';
+
+		result = result + html;
+	}
+	
 	anker.innerHTML = result;
 }
 
@@ -91,8 +115,14 @@ function onClick(event) {
 	}
 
 	target = document.getElementsByClassName("ui-item-active")[0];
-
-	var url = baseUrl + '/sw/' + target.getAttribute("data-id") + '/';
+	
+	var id = target.getAttribute("data-id");
+	if (id === undefined || id === null){
+		refreshData();
+		return;
+	}
+	
+	var url = baseUrl + '/sw/' + id + '/';
 
 	if (target.classList.contains('yellow')) {
 		url = url + 'off';
@@ -106,5 +136,6 @@ function onClick(event) {
 
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.open("GET", url);
+	xmlhttp.timeout = 2000;
 	xmlhttp.send();
 }
